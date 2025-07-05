@@ -1,0 +1,57 @@
+[Unit]
+Description=Minecraft Server
+After=network.target
+
+[Service]
+# User and group under which the server will run.
+# It's highly recommended to create a dedicated user (e.g., 'minecraft') for security.
+User=minecraft
+Group=minecraft
+
+# The working directory for the server.
+# This should be the directory where your start.sh script and server.jar are located.
+WorkingDirectory=/opt/minecraft_server
+
+# Path to your start script. Ensure this path is correct.
+# Type=forking is often used for scripts that daemonize themselves or return control quickly.
+# If your start.sh script keeps running (like the one I provided with the 'while true' loop),
+# then 'Type=simple' or 'Type=exec' might be more appropriate.
+# However, for a script that just launches Java and Java itself becomes the main process,
+# 'Type=simple' is usually fine. Let's stick with 'simple' as the provided script
+# directly runs the Java command.
+Type=simple
+
+# The command to execute to start the server.
+# Make sure the path to your start.sh script is absolute.
+ExecStart=/opt/minecraft_server/start.sh
+
+# The command to execute to stop the server gracefully.
+# This assumes your server has a 'stop' command.
+# If your server needs a different stop command (e.g., 'say Stopping server; stop'),
+# adjust this accordingly.
+# For a simple script, you might just want to kill the process, but graceful shutdown is better.
+# This command sends 'stop' to the screen/tmux session or directly to the server's input.
+# If you are using 'nogui' and not a screen/tmux session, you might need a different approach
+# to send commands to the running Java process. For simplicity, we'll assume the 'start.sh'
+# manages the process directly and killing it is acceptable for 'stop'.
+# A more robust stop would involve sending a 'stop' command to the server's console.
+# For now, we'll use a simple kill.
+ExecStop=/bin/kill -SIGINT $MAINPID
+
+# Restart the server if it crashes.
+# 'on-failure' restarts only if the service exits with a non-zero status.
+# 'always' restarts regardless of exit status.
+Restart=on-failure
+
+# Delay before restarting (in seconds).
+RestartSec=10
+
+# Standard output and error will be logged to systemd journal.
+StandardOutput=journal
+StandardError=journal
+
+# Give the server some time to shut down gracefully.
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target
