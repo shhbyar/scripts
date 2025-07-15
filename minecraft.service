@@ -23,7 +23,7 @@ Type=simple
 
 # The command to execute to start the server.
 # Make sure the path to your start.sh script is absolute.
-ExecStart=/opt/minecraft_server/start.sh
+ExecStart=/opt/minecraft_server/scripts/start.sh
 
 # The command to execute to stop the server gracefully.
 # This assumes your server has a 'stop' command.
